@@ -1,0 +1,19 @@
+{
+  "name": "autumnblaze-updater",
+  "version": "0.1.0",
+  "description": "updates the autumnblaze bot automatically using git on startup, and checks for updates every so often",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo I am too lazy lol"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PCelestia/autumnblaze-updater.git"
+  },
+  "author": "PCelestia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PCelestia/autumnblaze-updater/issues"
+  },
+  "homepage": "https://github.com/PCelestia/autumnblaze-updater#readme"
+}
