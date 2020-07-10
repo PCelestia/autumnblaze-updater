@@ -1,22 +1,18 @@
 const fs = require("fs");
-const { exec } = require("child_process");
+const { execSync } = require("child_process");
 
 // first time
 const install = () => {
+   console.log("==================== INSTALLING ====================");
    console.log("==================== GIT CLONEING ====================");
-   exec("git clone https://github.com/PCelestia/autumnblaze.git", (err, stdo, stde) => {
-      if (err) {
-         console.warn("error: " + err);
-         return;
-      }
-      if (stde) {
-         console.warn("asdf");
-         console.warn("stderror: " + stde);
-      }
-      console.log("==================== GIT CLONE OUTPUT ====================");
+   try {
+      const stdo = execSync("git clone https://github.com/PCelestia/autumnblaze.git").toString();
       console.log(stdo);
-      update(true);
-   });
+   } catch (err) {
+      console.warn("==================== ERROR ====================\n" + err);
+      return false;
+   }
+   return update(true);
 };
 
 // move to autumnblaze if arent there already
@@ -29,55 +25,51 @@ const movedirs = () => {
    return true;
 };
 
-// update the repo and npm install
+// update repo (pull) and npm install
 const update = (e = false) => {
    // if e is true, its called from install lol
    // if its false, its an update
    // quite strange ik
+   if (!e) console.log("==================== UPDATING ====================");
    if (!movedirs()) {
       if (e) console.warn("failed to install: could not switch working directory");
       else console.warn("failed to update: could not switch working directory");
-      return;
+      return false;
    }
+
    if (!e) {
+      // update, git pull
       console.log("==================== GIT PULLING ====================");
-      exec("git pull", (err, stdo, stde) => {
-         if (err) {
-            console.warn("==================== ERROR ====================\n" + err);
-            return;
+      try {
+         const stdo = execSync("git pull").toString();
+         if (!stdo.startsWith("Already up to date.")) {
+            console.log(stdo);
+         } else {
+            console.log("==================== ALREADY UP TO DATE ====================");
+            return true;
          }
-         if (stde) {
-            console.warn("==================== STDERROR ====================\n" + stde);
-         }
-         console.log("==================== GIT PULL OUTPUT ====================");
-         console.log(stdo);
-         npminstall(e);
-      });
-   } else npminstall(e);
+      } catch (err) {
+         console.warn("==================== ERROR ====================\n" + err);
+         return false;
+      }
+   }
+   // npm install no matter what
+   // unless no git changes, which then its already returned by now
+   npminstall();
+   if (!e) console.log("==================== UPDATE SUCCESS ====================\n");
 };
 
-// install npm dependencies
-const npminstall = (e) => {
+const npminstall = () => {
    console.log("==================== NPM INSTALLING ====================");
-   exec("npm install", (err, stdo, stde) => {
-      if (err) {
-         console.warn("==================== ERROR ====================\n" + err);
-         return;
-      }
-      if (stde) {
-         console.warn("==================== STDERROR ====================\n" + stde);
-      }
-      console.log("==================== NPM INSTALL OUTPUT ====================");
+   try {
+      const stdo = execSync("npm install").toString();
       console.log(stdo);
-      if (!e) console.log("update success");
-   });
+   } catch (err) {
+      console.warn("==================== ERROR ====================\n" + err);
+      return false;
+   }
+   return true;
 };
-// see if the directory already exists
-// if it does, assuming already cloned and npm installed
-module.exports = () => {
-   if (!fs.existsSync("./autumnblaze")) {
-      console.log("==================== FIRST TIME INSTALLING ====================");
-      console.log("\n=============== HAIIIIII WELCOME TO MY THING LOL ==============");
-      install();
-   } else update();
-};
+
+// install();
+update();
