@@ -1,4 +1,5 @@
-const fs = require("fs");
+"use strict";
+// const fs = require("fs");
 const { execSync } = require("child_process");
 
 // first time
@@ -71,5 +72,50 @@ const npminstall = () => {
    return true;
 };
 
+// clear requires cache
+const clearrequires = () => {
+   for (const requirethingie in require.cache) {
+      delete require.cache[requirethingie];
+   }
+};
+
 // install();
-update();
+// update();
+const defaultopts = {
+   autoupdate: true,
+   checkinterval: 7200000, // in millis, default check once per two hours
+   updateonstartup: true,
+   updateonshutdown: false // NOT RECOMMENDED
+};
+
+const updater = (autumnblazeopts, updateropts = defaultopts) => {
+   var patchedupdateropts = JSON.parse(JSON.stringify(defaultopts));
+   for (const key in updateropts) patchedupdateropts[key] = updateropts[key];
+   updater.opts = patchedupdateropts;
+   updater.autumnblazeopts = autumnblazeopts;
+   return updater;
+};
+
+updater.defaultopts = defaultopts;
+updater.botrunning = false;
+
+updater.start = () => {
+   updater.botrunning = true;
+   updater.autumnblaze = require("./autumnblaze")(updater.autumnblazeopts).connect();
+   return updater;
+};
+
+updater.update = () => {
+   if (updater.botrunning) {
+      updater.autumnblaze.stop();
+      updater.botrunning = false;
+   }
+   clearrequires();
+   update();
+};
+updater.restartandupdate = () => {
+   updater.update();
+   updater.start();
+};
+
+module.exports = updater;
