@@ -112,10 +112,13 @@ updater.update = () => {
    }
    clearrequires();
    update();
+   return updater;
 };
-updater.restartandupdate = () => {
+updater.updateandrestart = () => {
    updater.update();
    updater.start();
+   return updater;
 };
+updater.updateandstart = updater.updateandrestart;
 
 module.exports = updater;
