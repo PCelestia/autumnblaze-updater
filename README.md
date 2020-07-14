@@ -1,6 +1,8 @@
 ## autumnblaze-updater
 a very hacky thing that every so often checks for updates to autumnblaze using `git fetch`, and updates using `git pull` and `npm install` when you say so.
 
+you can view my plans and things for the updater at [the github project](https://github.com/users/PCelestia/projects/1).
+
 ## requirements
 - `node.js` and `npm` required. tested and working on `npm 6.14.5` and `node v14.4.0`, but `12.18.2 LTS` and `14.5.0 Current` (as well as all future "current" and "LTS" versions) should work.
 - `git` required (unless i make a non-git version). tested and working on `git version 2.23.0.windows.1`.
